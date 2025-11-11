@@ -182,7 +182,7 @@ function displayResults(data, container) {
         }
         container.innerHTML += '<br>';
     }
-    }
+}
 
 
 
