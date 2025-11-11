@@ -114,5 +114,36 @@ async function fetchDataInParallel(userId) {
     }
     return { user, posts, comments };
 }
-//---Part4---
+//---Part5---
+async function getUserContent(userId) {
+  console.log('=== Fetching all user content ===');
+  
+  try {
+    // Step 1: Fetch user profile
+    const user = await fetchUserProfile(userId);
+    console.log('Step 1: User profile retrieved -', user.name);
+    // Step 2: Fetch user's posts
+    const posts = await fetchUserPosts(postId);
+    console.log('Step 2: Posts retrieved -', posts.length);
+    // Step 3: Fetch comments for all posts
+    const comments = [];
+    for (let i = 0; i < posts.length; i++) {
+        const post = posts[i];
+        const postComments = await fetchPostComments(post.postId);
+        comments.push({ postId: post.postId, comments: postComments });
+    }
+    console.log('Step 3: Comments retrieved');
+    // Step 4: Combine all data into one object
+    const allContent = {
+        user: user,          
+        posts: posts,       
+        comments: comments, 
+    };
+    return allContent;
+  } catch (error) {
+    console.error('Failed to fetch user content:', error.message);
+    throw error;
+  }
+}
+
 
