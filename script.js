@@ -1,4 +1,5 @@
 //---Part2---
+//A-UserProfile
 function fetchUserProfile(userId) {
   return new Promise((resolve, reject) => {
     setTimeout(() => {
@@ -12,7 +13,7 @@ function fetchUserProfile(userId) {
     }, 1000);
   });
 }
-
+//B-UserPosts
 function fetchUserPosts(userId) {
   return new Promise((resolve, reject) => {
     setTimeout(() => {
@@ -25,7 +26,7 @@ function fetchUserPosts(userId) {
     }, 1500);
   });
 }
-
+//C-PostComments
 function fetchPostComments(postId) {
   return new Promise((resolve, reject) => {
     setTimeout(() => {
@@ -44,7 +45,7 @@ function fetchPostComments(postId) {
   });
 }
 //---Part3---
-//Sequential
+//D-Sequential
 async function fetchDataSequentially(userId) {
     console.log('Starting sequential fetch...');
     const startTime = Date.now();
@@ -79,7 +80,7 @@ async function fetchDataSequentially(userId) {
     }
     return { user, posts, comments };
 }
-//Parallel
+//E-Parallel
 async function fetchDataInParallel(userId) {
     console.log('Starting parallel fetch...');
     const startTime = Date.now();
@@ -115,6 +116,7 @@ async function fetchDataInParallel(userId) {
     return { user, posts, comments };
 }
 //---Part5---
+//H-Master Function
 async function getUserContent(userId) {
   console.log('=== Fetching all user content ===');
   
@@ -123,7 +125,7 @@ async function getUserContent(userId) {
     const user = await fetchUserProfile(userId);
     console.log('Step 1: User profile retrieved -', user.name);
     // Step 2: Fetch user's posts
-    const posts = await fetchUserPosts(postId);
+    const posts = await fetchUserPosts(userId);
     console.log('Step 2: Posts retrieved -', posts.length);
     // Step 3: Fetch comments for all posts
     const comments = [];
@@ -145,5 +147,42 @@ async function getUserContent(userId) {
     throw error;
   }
 }
+//---Part6---
+//I-Connect html buttons
+document.getElementById('sequentialBtn').addEventListener('click', async () => {
+  const output = document.getElementById('output');
+  output.innerHTML = 'Loading sequential data...';
+  const data = await fetchDataSequentially(1);
+  displayResults(data, output);
+});
+document.getElementById('parallelBtn').addEventListener('click', async () => {
+  const output = document.getElementById('output');
+  output.innerHTML = 'Loading parallel data...';
+  const data = await fetchDataInParallel(1);
+  displayResults(data, output);
+});
+//J-Display function
+function displayResults(data, container) {
+    //Clear Previous Content
+    container.innerHTML = '';
+    //Display user info
+    container.innerHTML += 'User: ' + data.user.name + '<br><br>';
+    container.innerHTML += 'User Name: ' + data.user.username +'<br><br>';
+    container.innerHTML += 'Email: ' + data.user.email + '<br><br>';
+    //Display Posts and Comments
+    for (let i = 0; i < data.posts.length; i++) {
+        const post = data.posts[i];
+        container.innerHTML += 'Post: ' + post.title + '<br>';
+        container.innerHTML += 'Content: ' + post.content + '<br>';
+
+        const postComments = data.comments[i].comments; 
+        for (let j = 0; j < postComments.length; j++) {
+            const comment = postComments[j];
+            container.innerHTML += comment.username + ': ' + comment.comment + '<br>';
+        }
+        container.innerHTML += '<br>';
+    }
+    }
+
 
 
